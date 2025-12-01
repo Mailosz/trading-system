@@ -1,0 +1,91 @@
+{
+  "name": "trading-system",
+  "description": "Webcomponent trading-system following open-wc recommendations",
+  "license": "MIT",
+  "author": "trading-system",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint --ext .ts,.html src --ignore-path .gitignore && prettier \"src/**/*.ts\" --check --ignore-path .gitignore",
+    "format": "eslint --ext .ts,.html src --fix --ignore-path .gitignore && prettier \"src/**/*.ts\" --write --ignore-path .gitignore",
+    "prepare": "husky",
+    "test": "tsc --noEmit && wtr --coverage",
+    "test:watch": "concurrently -k -r \"tsc --noEmit --watch\" \"wtr --watch\"",
+    "analyze": "cem analyze --litelement",
+    "start": "webpack serve --config webpack.config.js --open",
+    "build": "webpack --config webpack.config.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lit": "^3.1.4"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@open-wc/eslint-config": "^12.0.3",
+    "@open-wc/testing": "^4.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/mocha": "^10.0.7",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "@web/dev-server": "^0.4.6",
+    "@web/rollup-plugin-html": "^2.3.0",
+    "@web/rollup-plugin-import-meta-assets": "^2.2.1",
+    "@web/test-runner": "^0.18.2",
+    "babel-plugin-template-html-minifier": "^4.1.0",
+    "concurrently": "^8.2.2",
+    "deepmerge": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.5",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2",
+    "rimraf": "^5.0.9",
+    "rollup": "^4.18.1",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-workbox": "^8.1.0",
+    "ts-loader": "^9.5.4",
+    "tslib": "^2.6.3",
+    "typescript": "^5.9.3",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+      "@open-wc",
+      "prettier"
+    ],
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error"
+      ],
+      "import/no-unresolved": "off",
+      "import/extensions": [
+        "error",
+        "always",
+        {
+          "ignorePackages": true
+        }
+      ]
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "customElements": "custom-elements.json"
+}
