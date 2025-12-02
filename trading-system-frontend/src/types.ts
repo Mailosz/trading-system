@@ -13,7 +13,7 @@ export type Order = {
   status: OrderStatus;
   isin : string;
   quantity: number;
-  priceLimit: number;
+  executionPrice: number;
 }
 
 export type OrderDetails = {

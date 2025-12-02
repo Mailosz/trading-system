@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
 import { Order, OrderStatus } from '../types';
+import {getStatusLabel} from '../utils';
 
 
 @customElement('order-list')
@@ -97,10 +98,10 @@ export class OrderListElement extends LitElement {
               (entry, i) => html`
                 <div class="row">
                   <div>${entry.orderId}</div>
-                  <div>${entry.status}</div>
+                  <div>${getStatusLabel(entry.status)}</div>
                   <div>${entry.isin}</div>
                   <div>${entry.quantity}</div>
-                  <div>${entry.priceLimit}</div>
+                  <div>${entry.executionPrice}</div>
                   <div>${entry.status === 'FILLED' ? html`<a href="/orders/${entry.id}">Zobacz szczegóły</a>` : html``}</div>
                 </div>
               `,
