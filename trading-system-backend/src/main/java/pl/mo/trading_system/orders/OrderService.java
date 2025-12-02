@@ -2,6 +2,7 @@ package pl.mo.trading_system.orders;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -9,13 +10,13 @@ import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
 import pl.mo.trading_system.tickers.TickerRepository;
-import pl.mo.trading_system.tickers.TickerService;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -53,6 +54,8 @@ public class OrderService {
 
         var response = gpwConnector.placeOrder(request);
         if (response.isPresent()) {
+
+
 
             order.setOrderId(response.get().orderId());
             order.setStatus(OrderStatus.valueOf(response.get().status().toUpperCase(Locale.ROOT)));
@@ -118,14 +121,14 @@ public class OrderService {
                 }
             });
         } catch (ResourceAccessException ex) {
-            ex.printStackTrace();
+            log.error("Error during checkOrderStatus", ex);
         }
 
     }
 
     @Scheduled(fixedDelayString = "${updateOrderStatuses.delay}")
     void updateOrderStatuses() {
-        System.out.println("Update order statuses");
+        log.info("Update order statuses");
         orderRepository.findAllByStatusWithTicker(OrderStatus.SUBMITTED).forEach(this::checkOrderStatus);
     }
 

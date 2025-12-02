@@ -2,16 +2,17 @@ package pl.mo.trading_system.tickers;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwPrice;
-import pl.mo.trading_system.tickers.dto.TickerDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TickerService {
@@ -31,7 +32,7 @@ public class TickerService {
 
     @Scheduled(fixedRateString = "${gpw.priceUpdateRate}")
     void updateInstrumentPrices() {
-        System.out.println("Scheduled prices update");
+        log.info("Scheduled prices update");
         updatePrices();
     }
 
