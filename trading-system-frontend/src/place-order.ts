@@ -12,13 +12,13 @@ export class PlaceOrderElement extends LitElement {
   listBoxData : Ticker[] = [];
 
   @property({ type: Number })
-  quantity: number = 0;
+  quantity: number | null= null;
 
   @property({ type: String })
   orderType: string = 'LMT';
 
   @property({ type: Number })
-  priceLimit: number = 0.00;
+  priceLimit: number | null = null;
 
   @property({ type: Object })
   selectedTicker: Ticker | null = null;
@@ -30,6 +30,12 @@ export class PlaceOrderElement extends LitElement {
   static styles = css`
     :host {
 
+    }
+
+    #order-form {
+      display: flex; 
+      flex-direction: column; 
+      gap: 4px;
     }
 
     label {
@@ -73,32 +79,34 @@ export class PlaceOrderElement extends LitElement {
   render() {
     return html`
     <a href="/" class="button" style="margin: 4px 0 12px 0;">Powrót do listy zleceń</a>
-      <div style="display: flex; flex-direction: column; gap: 4px;">
+      <form id="order-form">
 
-        <input type="text" placeholder="Wyszukaj instrument..." @input="${this.handleInput}" />
-        <select multiple @input="${this.handleTickerSelected}">
+        <input type="text" placeholder="Wyszukaj instrument..." @input="${this.handleInput}" autofocus/>
+        <select multiple @input="${this.handleTickerSelected}" required>
           ${this.listBoxData.map(
             (entry, i) => html`
               <option .value="${entry.isin}">${entry.name}</option>
             `,
           )}
         </select>
-        <label>Liczba:</label>
-        <input type="number" placeholder="Quantity" .value="${this.quantity}" @input="${this.handleQuantityInput}" required min="1" />
+        <label>Liczba do zakupu:</label>
+        <input type="number" placeholder="Podaj ilość" .value="${this.quantity}" @input="${this.handleQuantityInput}" required min="1" />
         <label>Rodzaj zlecenia:</label>
         <select .value="${this.orderType}" @input="${this.handleOrderTypeChange}">
           <option value="LMT">LMT - zlecenie z limitem</option>
           <option value="PKC">PKC - po każdej cenie</option>
           <option value="PCR">PCR - po cenie rynkowej</option>
         </select>
-        <label>Limit ceny:</label>
-        <input type="number" placeholder="Limit ceny" .value="${this.priceLimit}" @input="${this.handlePriceLimitInput}" required min="0" step="0.01" />
+        ${this.orderType === 'LMT' ? html`
+          <label>Limit ceny:</label>
+          <input type="number" placeholder="Podaj limit ceny" .value="${this.priceLimit}" @input="${this.handlePriceLimitInput}" required min="0" step="0.01" />
+          ` : html``}
         <label>Zlecenie ważne do (pole opcjonalne):</label>
         <input type="datetime-local" @input="${this.handleExpiresAtInput}" />
         <label>Current price:</label>
         <input type="text" placeholder="Current price" disabled .value="${this.selectedTicker?.price || '0.00'}" />
         <button class="button" @click="${this.placeOrder}" style="margin: 12px 0;">Złóż zlecenie</button>
-      </div>
+      </form>
     `;
   }
 
@@ -149,6 +157,12 @@ export class PlaceOrderElement extends LitElement {
   placeOrder() {
 
     if (!this.selectedTicker) {
+      return;
+    }
+
+    const form = this.shadowRoot?.getElementById('order-form') as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.reportValidity();
       return;
     }
 
