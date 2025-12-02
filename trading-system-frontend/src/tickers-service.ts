@@ -1,6 +1,7 @@
+import { Ticker } from "./types";
 
 
-export function findTickers(searchstring: string): Promise<string[]> {
+export function findTickers(searchstring: string): Promise<Ticker[]> {
 
 
         let request = new Request(`/api/tickers/search`, {
@@ -14,6 +15,7 @@ export function findTickers(searchstring: string): Promise<string[]> {
         return fetch(request)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 console.log('Tickers List:', data);
                 return data;
             })

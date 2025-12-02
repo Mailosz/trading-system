@@ -17,6 +17,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@blaze/atoms": "^13.1.0",
+    "@lion/ui": "^0.15.2",
+    "@lit-labs/router": "^0.1.4",
     "lit": "^3.1.4"
   },
   "devDependencies": {

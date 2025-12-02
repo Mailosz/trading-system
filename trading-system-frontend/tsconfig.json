@@ -5,6 +5,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "experimentalDecorators": true,
+        "useDefineForClassFields": false,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

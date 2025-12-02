@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { OrderListElement } from './order-list';
+import { Router } from '@lit-labs/router';
 
 @customElement('trading-system')
 export class TradingSystem extends LitElement {
@@ -11,11 +11,10 @@ export class TradingSystem extends LitElement {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: flex-start;
-      font-size: calc(10px + 2vmin);
       color: #1a2b42;
-      max-width: 960px;
+      max-width: 600px;
       margin: 0 auto;
       text-align: center;
       background-color: var(--trading-system-background-color);
@@ -49,11 +48,16 @@ export class TradingSystem extends LitElement {
     }
   `;
 
+    private router = new Router(this, [
+      { path: '/', render: () => html`<order-list></order-list>` },
+      { path: '/order', render: () => html`<place-order></place-order>` },
+      { path: '/orders/*', render: () => html`<order-details></order-details>` },
+    ]);
+
   render() {
     return html`
       <main>
-        <place-order></place-order>
-          <order-list></order-list>
+        ${this.router.outlet()}
       </main>
 
       <p class="app-footer">
