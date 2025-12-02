@@ -1,4 +1,4 @@
-import './trading-system';
-import './order-list';
-import './place-order';
-import './order-details';
+import './components/trading-system';
+import './components/order-list';
+import './components/place-order';
+import './components/order-details';
