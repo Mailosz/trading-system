@@ -2,7 +2,7 @@ package pl.mo.trading_system.tickers.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.mo.trading_system.tickers.model.Ticker;
+import pl.mo.trading_system.tickers.model.TickerEntity;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public class TickerDTO {
     String mic;
     Double price;
 
-    public static TickerDTO fromEntity(Ticker ticker) {
+    public static TickerDTO fromEntity(TickerEntity ticker) {
         var dto = new TickerDTO();
 
         dto.setIsin(ticker.getIsin());

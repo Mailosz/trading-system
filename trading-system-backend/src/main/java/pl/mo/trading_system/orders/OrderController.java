@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.mo.trading_system.orders.dto.OrderDetailsDTO;
 import pl.mo.trading_system.orders.dto.OrderListItemDTO;
 import pl.mo.trading_system.orders.dto.OrderRequest;
-import pl.mo.trading_system.orders.model.Order;
+import pl.mo.trading_system.orders.model.OrderEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class OrderController {
     }
 
     @PostMapping("/api/orders/place")
-    public Order placeOrder(@RequestBody OrderRequest order) {
+    public OrderEntity placeOrder(@RequestBody OrderRequest order) {
         return orderService.placeOrder(order);
     }
 

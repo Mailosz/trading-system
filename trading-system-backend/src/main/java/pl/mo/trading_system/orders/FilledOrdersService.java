@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import pl.mo.trading_system.orders.dto.FilledOrderMessage;
-import pl.mo.trading_system.orders.model.Order;
+import pl.mo.trading_system.orders.model.OrderEntity;
 
 @Service
 public class FilledOrdersService {
@@ -17,7 +17,7 @@ public class FilledOrdersService {
         this.topicName = topicName;
     }
 
-    void handleOrderFilled(Order order) {
+    void handleOrderFilled(OrderEntity order) {
 
         var message = new FilledOrderMessage(
                 order.getIsin(),

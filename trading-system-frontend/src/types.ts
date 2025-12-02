@@ -1,6 +1,7 @@
 export type Ticker = {
   isin: string;
   name: string;
+  ticker: string;
   mic: string;
   price: string;
   tradeCurrency: string;

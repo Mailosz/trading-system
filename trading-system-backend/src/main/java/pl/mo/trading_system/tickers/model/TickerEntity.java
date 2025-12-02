@@ -3,15 +3,17 @@ package pl.mo.trading_system.tickers.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
-@Entity(name = "tickers")
+@Entity
+@Table(name = "tickers")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ticker {
+public class TickerEntity {
 
     @Id
     String isin;

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.mo.trading_system.tickers.dto.PriceDTO;
-import pl.mo.trading_system.tickers.model.Ticker;
+import pl.mo.trading_system.tickers.model.TickerEntity;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ public class TickersController {
     final TickerService tickerService;
 
     @PostMapping("/api/tickers/search")
-    public List<Ticker> searchForTickers(@RequestBody String searchstring) {
-        return tickerService.findTickersByName(searchstring);
+    public List<TickerEntity> searchForTickers(@RequestBody String searchstring) {
+        return tickerService.findTickersByTicker(searchstring);
     }
 
     @GetMapping("/api/tickers/price/{isin}")

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwPrice;
-import pl.mo.trading_system.tickers.model.Ticker;
+import pl.mo.trading_system.tickers.model.TickerEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +42,7 @@ public class TickerService {
 
         try {
             var tickers = gpwConnector.getTickers().stream()
-                    .map((gpwTicker -> Ticker.builder()
+                    .map((gpwTicker -> TickerEntity.builder()
                             .isin(gpwTicker.isin())
                             .ticker(gpwTicker.ticker())
                             .name(gpwTicker.name())
@@ -70,8 +70,8 @@ public class TickerService {
     }
 
 
-    public List<Ticker> findTickersByName(String name) {
-        return tickerRepository.findByNameContainingIgnoreCase(name);
+    public List<TickerEntity> findTickersByTicker(String name) {
+        return tickerRepository.findByTickerContainingIgnoreCase(name);
     }
 
     public Optional<Double> getTickerPrice(String isin) {

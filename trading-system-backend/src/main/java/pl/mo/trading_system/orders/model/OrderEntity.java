@@ -3,14 +3,15 @@ package pl.mo.trading_system.orders.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import pl.mo.trading_system.tickers.model.Ticker;
+import pl.mo.trading_system.tickers.model.TickerEntity;
 
 import java.util.UUID;
 
-@Entity(name = "orders")
+@Entity
 @Getter
 @Setter
-public class Order {
+@Table(name = "orders")
+public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,7 +31,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "isin", insertable = false, updatable = false)
-    Ticker ticker;
+    TickerEntity ticker;
 
     @Column(name = "execution_price")
     Double executionPrice;

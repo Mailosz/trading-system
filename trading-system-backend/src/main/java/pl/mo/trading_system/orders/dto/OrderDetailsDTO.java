@@ -2,7 +2,7 @@ package pl.mo.trading_system.orders.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.mo.trading_system.orders.model.Order;
+import pl.mo.trading_system.orders.model.OrderEntity;
 import pl.mo.trading_system.orders.model.OrderStatus;
 
 import java.util.UUID;
@@ -23,7 +23,7 @@ public class OrderDetailsDTO {
     Long filledDate;
     Double commission;
 
-    public static OrderDetailsDTO fromEntity(Order order) {
+    public static OrderDetailsDTO fromEntity(OrderEntity order) {
         var dto = new OrderDetailsDTO();
 
         dto.setId(order.getId());
