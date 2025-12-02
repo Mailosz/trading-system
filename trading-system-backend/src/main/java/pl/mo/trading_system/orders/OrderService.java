@@ -3,12 +3,15 @@ package pl.mo.trading_system.orders;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
-import pl.mo.trading_system.tickers.Ticker;
 import pl.mo.trading_system.tickers.TickerService;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class OrderService {
     final GpwConnector gpwConnector;
     final OrderRepository orderRepository;
     final TickerService tickerService;
+    final AccountService accountService;
 
     public OrderEntity placeOrder(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
@@ -31,17 +35,17 @@ public class OrderService {
                 .orderType(orderRequest.orderType())
                 .isin(ticker.get().getIsin())
                 .tradeCurrency(ticker.get().getTradeCurrency())
-                .accountId(123)
+                .accountId(accountService.getCurrentAccountId())
                 .quantity(orderRequest.quantity())
                 .side("BUY")
                 .expiresAt(orderRequest.expiresAt())
                 .build();
 
         var order = new OrderEntity();
+        order.setAccountId(accountService.getCurrentAccountId());
         order.setIsin(ticker.get().getIsin());
         order.setTickerName(ticker.get().getName());
         order.setCurrency(ticker.get().getTradeCurrency());
-        order.setPriceLimit(orderRequest.priceLimit());
         order.setQuantity(orderRequest.quantity());
         order.setCommission(computeCommission(ticker.get().getMic(), orderRequest.priceLimit(), orderRequest.quantity()));
 
@@ -83,6 +87,15 @@ public class OrderService {
 
     }
 
+    public List<OrderEntity> getUserOrders() {
+        return orderRepository.findAllByAccountId(accountService.getCurrentAccountId());
+    }
+
+    public Optional<OrderEntity> findById(UUID id) {
+        return orderRepository.findById(id)
+                .filter((order) -> accountService.getCurrentAccountId() == order.getOrderId());
+    }
+
 
     public void checkOrderStatus(OrderEntity entity) {
 
@@ -94,5 +107,6 @@ public class OrderService {
         });
 
     }
+
 
 }

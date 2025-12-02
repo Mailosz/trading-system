@@ -12,19 +12,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderController {
 
-    final OrderRepository orderRepository;
     final OrderService orderService;
 
     @GetMapping("/api/orders")
     public List<OrderEntity> getOrdersList() {
-
-        return orderRepository.findAll();
-
+        return orderService.getUserOrders();
     }
 
     @GetMapping("/api/orders/{id}")
     public Optional<OrderEntity> getOrderDetails(@PathVariable("id")UUID id) {
-        return orderRepository.findById(id);
+        return orderService.findById(id);
     }
 
     @PostMapping("/api/orders/place")

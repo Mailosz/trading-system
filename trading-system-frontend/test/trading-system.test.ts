@@ -1,8 +1,8 @@
 import { html } from 'lit';
 import { fixture, expect } from '@open-wc/testing';
 
-import type { TradingSystem } from '../src/trading-system.js';
-import '../src/trading-system.js';
+import type { TradingSystem } from '../src/components/trading-system.js';
+import '../src/components/trading-system.js';
 
 describe('TradingSystem', () => {
   let element: TradingSystem;
