@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwPrice;
+import pl.mo.trading_system.tickers.dto.TickerDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,12 +72,7 @@ public class TickerService {
         return tickerRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public Optional<TickerDTO> getTickerPrice(String isin) {
-
-        return tickerRepository.findByIsin(isin).map((ticker) -> {
-            var dto = TickerDTO.fromEntity(ticker);
-            dto.setPrice(pricesMap.get(isin));
-            return dto;
-        });
+    public Optional<Double> getTickerPrice(String isin) {
+        return Optional.of(pricesMap.get(isin));
     }
 }

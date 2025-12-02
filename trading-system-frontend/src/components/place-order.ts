@@ -24,6 +24,9 @@ export class PlaceOrderElement extends LitElement {
   @property({ type: Date })
   expiresAt: Date | null = null;
 
+  @property({ type: Number })
+  currentPrice: number | null = null;
+
 
   static styles = css`
     :host {
@@ -102,7 +105,7 @@ export class PlaceOrderElement extends LitElement {
         <label>Zlecenie ważne do (pole opcjonalne):</label>
         <input type="datetime-local" @input="${this.handleExpiresAtInput}" />
         <label>Current price:</label>
-        <input type="text" placeholder="Current price" disabled .value="${this.selectedTicker?.price || '0.00'}" />
+        <input type="text" placeholder="Current price" disabled .value="${this.currentPrice || ''}" />
         <button type="button" class="button" @click="${this.placeOrder}" style="margin: 12px 0;">Złóż zlecenie</button>
       </form>
     `;
@@ -125,7 +128,25 @@ export class PlaceOrderElement extends LitElement {
     const selectedOption = select.selectedOptions.item(0);
     
     if (selectedOption) {
-      this.selectedTicker = this.listBoxData.find(ticker => ticker.isin === selectedOption.value) || null;
+  
+
+      const ticker = this.listBoxData.find(ticker => ticker.isin === selectedOption.value) || null;
+
+      if (ticker !== this.selectedTicker) {
+        this.selectedTicker = ticker;
+
+        if (ticker) {
+          fetch(`/api/tickers/price/${ticker.isin}`).then(response => response.json()).then(data => {
+            console.log('Current price data:', data);
+            this.currentPrice = Number.parseFloat(data.price);
+          }).catch(error => {
+            console.error('Error fetching current price:', error);
+            this.currentPrice = null;
+          });
+        } else {
+          this.currentPrice = null;
+        }
+      }
     }
   }
 

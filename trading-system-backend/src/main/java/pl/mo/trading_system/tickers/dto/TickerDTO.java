@@ -1,7 +1,8 @@
-package pl.mo.trading_system.tickers;
+package pl.mo.trading_system.tickers.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.mo.trading_system.tickers.Ticker;
 
 @Getter
 @Setter

@@ -91,7 +91,7 @@ export class OrderListElement extends LitElement {
             <div>Status</div>
             <div>ISIN</div>
             <div>Liczba</div>
-            <div>Limit</div>
+            <div>Cena</div>
             <div>Szczegóły</div>
           </div>
           ${this.listData.map(
