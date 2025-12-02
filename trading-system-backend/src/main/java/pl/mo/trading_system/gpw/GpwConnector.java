@@ -59,7 +59,7 @@ public class GpwConnector {
     }
 
     public Optional<GpwStatusResponse> getOrderStatus(String id) {
-        var response = restTemplate.getForEntity(baseUri.resolve("gpw/order").resolve(id), GpwStatusResponse.class);
+        var response = restTemplate.getForEntity(baseUri.resolve("gpw/order/").resolve(id), GpwStatusResponse.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             var body = response.getBody();

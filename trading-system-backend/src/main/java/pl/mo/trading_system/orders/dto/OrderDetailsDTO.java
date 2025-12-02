@@ -33,6 +33,7 @@ public class OrderDetailsDTO {
         dto.setIsin(order.getTicker().getIsin());
         dto.setTickerName(order.getTicker().getName());
         dto.setCurrency(order.getTicker().getTradeCurrency());
+        dto.setExecutionPrice(order.getExecutionPrice());
         dto.setQuantity(order.getQuantity());
         dto.setRegistrationTime(order.getRegistrationTime());
         dto.setFilledDate(order.getFilledDate());

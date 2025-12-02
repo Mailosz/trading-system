@@ -2,7 +2,9 @@ package pl.mo.trading_system.orders;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
@@ -22,6 +24,7 @@ public class OrderService {
     final OrderRepository orderRepository;
     final TickerRepository tickerRepository;
     final AccountService accountService;
+    final FilledOrdersService filledOrdersService;
 
     public OrderEntity placeOrder(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
@@ -97,16 +100,33 @@ public class OrderService {
 
     public void checkOrderStatus(OrderEntity entity) {
 
-        gpwConnector.getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(gpwStatusResponse -> {
-            entity.setStatus(OrderStatus.valueOf(gpwStatusResponse.status()));
-                    //TODO:
+        try {
+            gpwConnector.getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(gpwStatusResponse -> {
+                var status = OrderStatus.valueOf(gpwStatusResponse.status().toUpperCase(Locale.ROOT));
+                if (entity.getStatus() != status) {
 
+                    if (status == OrderStatus.FILLED) {
+                        entity.setExecutionPrice(gpwStatusResponse.executionPrice());
+                        entity.setFilledDate(gpwStatusResponse.executedTime());
+                        entity.setCommission(computeCommission(entity.getTicker().getMic(), entity.getExecutionPrice(), entity.getQuantity()));
 
+                        filledOrdersService.handleOrderFilled(entity);
+                    }
 
-            entity.setCommission(computeCommission(entity.getTicker().getMic(), entity.getExecutionPrice(), entity.getQuantity()));
-        });
+                    entity.setStatus(status);
+                    orderRepository.save(entity);
+                }
+            });
+        } catch (ResourceAccessException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
+    @Scheduled(fixedDelayString = "${updateOrderStatuses.delay}")
+    void updateOrderStatuses() {
+        System.out.println("Update order statuses");
+        orderRepository.findAllByStatusWithTicker(OrderStatus.SUBMITTED).forEach(this::checkOrderStatus);
+    }
 
 }

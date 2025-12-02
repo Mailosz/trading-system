@@ -27,6 +27,7 @@ public class OrderListItemDTO {
         dto.setStatus(order.getStatus());
         dto.setIsin(order.getIsin());
         dto.setQuantity(order.getQuantity());
+        dto.setExecutionPrice(order.getExecutionPrice());
 
         return dto;
     }
