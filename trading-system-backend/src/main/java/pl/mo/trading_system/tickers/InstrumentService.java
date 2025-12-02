@@ -1,14 +1,12 @@
-package pl.mo.trading_system.instruments;
+package pl.mo.trading_system.tickers;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,4 +79,8 @@ public class InstrumentService {
         return instrumentsMap.values().stream().filter((i) -> i.getName().toLowerCase(Locale.ROOT).contains(lowerCaseName)).toList();
     }
 
+    public List<Instrument> getAllInstruments() {
+
+        return instrumentsMap.values().stream().toList();
+    }
 }

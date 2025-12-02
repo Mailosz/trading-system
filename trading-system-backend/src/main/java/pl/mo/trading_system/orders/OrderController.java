@@ -15,19 +15,19 @@ public class OrderController {
     final OrderRepository orderRepository;
     final OrderService orderService;
 
-    @GetMapping("/orders")
+    @GetMapping("/api/orders")
     public List<OrderEntity> getOrdersList() {
 
         return orderRepository.findAll();
 
     }
 
-    @GetMapping("/orders/{id}")
+    @GetMapping("/api/orders/{id}")
     public Optional<OrderEntity> getOrderDetails(@PathVariable("id")UUID id) {
         return orderRepository.findById(id);
     }
 
-    @PostMapping("/orders/place")
+    @PostMapping("/api/orders/place")
     public OrderEntity placeOrder(@RequestBody OrderRequest order) {
         return orderService.placeOrder(order);
     }

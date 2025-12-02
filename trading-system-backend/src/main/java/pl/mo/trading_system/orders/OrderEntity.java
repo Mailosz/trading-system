@@ -16,9 +16,15 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
-    String orderId;
+    long orderId;
 
     OrderStatus status;
 
     long registrationTime;
+
+    String isin;
+
+    int quantity;
+
+    double priceLimit;
 }

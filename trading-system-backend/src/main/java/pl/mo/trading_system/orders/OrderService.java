@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
 
+import java.util.Locale;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -30,6 +32,12 @@ public class OrderService {
 
         if (response.isPresent()) {
             var order = new OrderEntity();
+
+            order.setOrderId(response.get().orderId());
+            order.setStatus(OrderStatus.valueOf(response.get().status().toUpperCase(Locale.ROOT)));
+            order.setIsin(orderRequest.isin());
+            order.setQuantity(orderRequest.quantity());
+            order.setPriceLimit(orderRequest.priceLimit());
             //TODO: populate
 
             orderRepository.save(order);
@@ -43,7 +51,7 @@ public class OrderService {
 
     public void checkOrderStatus(OrderEntity entity) {
 
-        var response = gpwConnector.getOrderStatus(entity.getOrderId());
+        var response = gpwConnector.getOrderStatus(Long.toString(entity.getOrderId()));
 
         response.ifPresent(gpwStatusResponse -> {
             entity.setStatus(OrderStatus.valueOf(gpwStatusResponse.status()));

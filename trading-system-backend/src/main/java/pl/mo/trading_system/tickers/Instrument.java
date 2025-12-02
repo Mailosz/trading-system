@@ -1,4 +1,4 @@
-package pl.mo.trading_system.instruments;
+package pl.mo.trading_system.tickers;
 
 import lombok.Getter;
 import lombok.Setter;
