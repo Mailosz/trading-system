@@ -1,13 +1,15 @@
 import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { Order, OrderStatus } from './types';
+import { OrderDetails } from './types';
+import { getStatusLabel } from './utils';
 
 
 @customElement('order-details')
 export class OrderDetailsElement extends LitElement {
 
-    @property({ type: Array })
-    listData : Order[] = [];
+    @property({ type: Object })
+    orderData : OrderDetails | null | undefined = undefined;
+
 
   static styles = css`
     :host {
@@ -46,62 +48,77 @@ export class OrderDetailsElement extends LitElement {
 
     .label {
       text-align: right;
+      align-self: center;
     }
 
     .value {
       text-align: left;
+      font-size: 14px;
     }
   `;
 
   async firstUpdated() {
-    try {
-      const response = await fetch('/api/orders');
-      this.listData = await response.json();
-    } catch (err) {
-      console.error('Fetch failed:', err);
+
+    const id = location.pathname.split('/').pop();
+
+    if (id) {
+      try {
+        const response = await fetch(`/api/orders/${id}`);
+        this.orderData = await response.json();
+      } catch (err) {
+        this.orderData = null;
+        console.error('Fetch failed:', err);
+      }
     }
+
+
   }
 
   render() {
     return html`
       
-        <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
+      <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div id="order-grid">
           <div style="grid-column: span 2; font-size: 20px; color: #555;">Szczegóły zlecenia</div>
 
-          <div class="label">Numer zlecenia:</div>
-          <div class="value">123456</div>
+          ${this.orderData === undefined ? html`<div>Ładowanie danych zlecenia...</div>`: 
+            this.orderData === null ? html`<div>Brak zlecenia</div>`  :
+              html`
+              <div class="label">Numer zlecenia:</div>
+              <div class="value">${this.orderData.orderId}</div>
 
-          <div class="label">Status zlecenia:</div>
-          <div class="value">Zrealizowane</div>
+              <div class="label">Status zlecenia:</div>
+              <div class="value">${getStatusLabel(this.orderData.status)}</div>
 
-          <div class="label">ISIN:</div>
-          <div class="value">ISIN: US1234567890</div>
+              <div class="label">ISIN:</div>
+              <div class="value">${this.orderData.isin}</div>
 
-          <div class="label">Instrument:</div>
-          <div class="value">ABC Corp</div>
+              <div class="label">Instrument:</div>
+              <div class="value">${this.orderData.tickerName}</div>
 
-          <div class="label">Waluta:</div>
-          <div class="value">PLN</div>
+              <div class="label">Waluta:</div>
+              <div class="value">${this.orderData.currency}</div>
 
-          <div class="label">Kurs akcji:</div>
-          <div class="value">50.00</div>
+              <div class="label">Kurs akcji:</div>
+              <div class="value">${this.orderData.priceLimit}</div>
 
-          <div class="label">Liczba:</div>
-          <div class="value">100</div>
+              <div class="label">Liczba:</div>
+              <div class="value">${this.orderData.quantity}</div>
 
-          <div class="label">Wartość zlecenia:</div>
-          <div class="value">49.75</div>
+              <div class="label">Wartość zlecenia:</div>
+              <div class="value">${this.orderData.quantity * this.orderData.priceLimit}</div>
 
-          <div class="label">Data utworzenia:</div>
-          <div class="value">2024-06-15 10:30:00</div>
+              <div class="label">Data utworzenia:</div>
+              <div class="value">${new Date(this.orderData.registrationTime * 1000).toLocaleString()}</div>
 
-          <div class="label">Data wykonania:</div>
-          <div class="value">2024-06-15 10:45:00</div>
+              <div class="label">Data wykonania:</div>
+              <div class="value">${this.orderData.filledDate ? new Date(this.orderData.filledDate * 1000).toLocaleString() : html`<i>-- brak daty --</i>`}</div>
 
-          <div class="label">Prowizja:</div>
-          <div class="value">1.25</div>
+              <div class="label">Prowizja:</div>
+              <div class="value">${this.orderData.commission}</div>
+            `}
+
         </div>
       </div>
     `;

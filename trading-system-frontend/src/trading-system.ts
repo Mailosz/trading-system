@@ -49,9 +49,9 @@ export class TradingSystem extends LitElement {
   `;
 
     private router = new Router(this, [
-      { path: '/', render: () => html`<order-list></order-list>` },
       { path: '/order', render: () => html`<place-order></place-order>` },
       { path: '/orders/*', render: () => html`<order-details></order-details>` },
+      { path: '/**', render: () => html`<order-list></order-list>` },
     ]);
 
   render() {

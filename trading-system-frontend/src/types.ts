@@ -16,6 +16,20 @@ export type Order = {
   priceLimit: number;
 }
 
+export type OrderDetails = {
+  id: string;
+    orderId: number;
+    status: OrderStatus;
+    isin: string;
+    tickerName: string;
+    currency: string;
+    priceLimit: number;
+    quantity: number;
+    registrationTime: number;
+    filledDate: number;
+    commission: number;
+}
+
 export type OrderType = 'LMT' | 'PKC' | 'PCR';
 
 export type OrderStatus = "SUBMITTED" | "FILLED" | "EXPIRED";
