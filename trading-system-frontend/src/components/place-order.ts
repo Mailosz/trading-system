@@ -198,7 +198,6 @@ export class PlaceOrderElement extends LitElement {
         expiresAt: this.expiresAt ? Math.floor(this.expiresAt.getTime() / 1000) : null,
       }),
     }).then(response => {
-      debugger
       if (response.ok) {
         location.assign('/');
       } else {
