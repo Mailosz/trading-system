@@ -19,19 +19,12 @@ public class OrderService {
     final TickerService tickerService;
 
     public OrderEntity placeOrder(OrderRequest orderRequest) {
-
-        if (orderRequest.quantity() < 1) {
-            throw new RuntimeException("Quantity must be > 0");
-        }
-
-        if (orderRequest.priceLimit() <= 0.0) {
-            throw new RuntimeException("Price limit must be >= 0");
-        }
+        validateOrderRequest(orderRequest);
 
         var ticker = tickerService.findTickerByIsin(orderRequest.isin());
 
         if (ticker.isEmpty()) {
-            throw new RuntimeException("No tiker");
+            throw new RuntimeException("No ticker");
         }
 
         GpwOrderRequest request = GpwOrderRequest.builder()
@@ -63,6 +56,20 @@ public class OrderService {
             return order;
         } else {
             throw new RuntimeException("TODO");
+        }
+    }
+
+    private void validateOrderRequest(OrderRequest orderRequest) {
+        if (orderRequest.orderType() == null) {
+            throw new RuntimeException("Wrong order type");
+        }
+
+        if (orderRequest.quantity() < 1) {
+            throw new RuntimeException("Quantity must be > 0");
+        }
+
+        if (orderRequest.orderType() == OrderType.LMT && orderRequest.priceLimit() <= 0.0) {
+            throw new RuntimeException("Price limit must be >= 0");
         }
     }
 
