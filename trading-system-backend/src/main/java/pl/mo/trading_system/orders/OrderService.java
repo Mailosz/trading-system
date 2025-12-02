@@ -37,6 +37,7 @@ public class OrderService {
                 .isin(ticker.get().getIsin())
                 .tradeCurrency(ticker.get().getTradeCurrency())
                 .accountId(accountService.getCurrentAccountId())
+                .limitPrice(orderRequest.orderType() == OrderType.LMT ? orderRequest.priceLimit() : null)
                 .quantity(orderRequest.quantity())
                 .side("BUY")
                 .expiresAt(orderRequest.expiresAt())
