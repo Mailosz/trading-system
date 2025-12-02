@@ -2,10 +2,10 @@ package pl.mo.trading_system.tickers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.mo.trading_system.tickers.dto.PriceDTO;
+import pl.mo.trading_system.tickers.model.Ticker;
 
 import java.util.List;
 

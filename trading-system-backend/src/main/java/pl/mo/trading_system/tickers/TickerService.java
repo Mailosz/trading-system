@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwPrice;
+import pl.mo.trading_system.tickers.model.Ticker;
 
 import java.util.*;
 import java.util.stream.Collectors;

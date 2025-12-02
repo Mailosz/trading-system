@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
-    List<OrderEntity> findAllByAccountId(long currentAccountId);
+public interface OrderRepository extends JpaRepository<Order, UUID> {
+    List<Order> findAllByAccountId(long currentAccountId);
 
-    Optional<OrderEntity> findByIdAndAccountId(UUID id, long currentAccountId);
+    Optional<Order> findByIdAndAccountId(UUID id, long currentAccountId);
 
-    @Query("SELECT o FROM OrderEntity o JOIN FETCH o.ticker WHERE o.status = :status")
-    List<OrderEntity> findAllByStatusWithTicker(@Param("status") OrderStatus status);
+    @Query("SELECT o FROM Order o JOIN FETCH o.ticker WHERE o.status = :status")
+    List<Order> findAllByStatusWithTicker(@Param("status") OrderStatus status);
 }

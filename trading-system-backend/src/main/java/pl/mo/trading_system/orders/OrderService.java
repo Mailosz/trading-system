@@ -10,7 +10,7 @@ import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
 import pl.mo.trading_system.orders.dto.OrderRequest;
-import pl.mo.trading_system.orders.model.OrderEntity;
+import pl.mo.trading_system.orders.model.Order;
 import pl.mo.trading_system.orders.model.OrderRepository;
 import pl.mo.trading_system.orders.model.OrderStatus;
 import pl.mo.trading_system.orders.model.OrderType;
@@ -32,7 +32,7 @@ public class OrderService {
     final AccountService accountService;
     final FilledOrdersService filledOrdersService;
 
-    public OrderEntity placeOrder(OrderRequest orderRequest) {
+    public Order placeOrder(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
 
         var ticker = tickerRepository.findByIsin(orderRequest.isin());
@@ -52,7 +52,7 @@ public class OrderService {
                 .expiresAt(orderRequest.expiresAt())
                 .build();
 
-        var order = new OrderEntity();
+        var order = new Order();
         order.setAccountId(accountService.getCurrentAccountId());
         order.setIsin(ticker.get().getIsin());
         order.setQuantity(orderRequest.quantity());
@@ -97,16 +97,16 @@ public class OrderService {
 
     }
 
-    public List<OrderEntity> getUserOrders() {
+    public List<Order> getUserOrders() {
         return orderRepository.findAllByAccountId(accountService.getCurrentAccountId());
     }
 
-    public Optional<OrderEntity> findById(UUID id) {
+    public Optional<Order> findById(UUID id) {
         return orderRepository.findByIdAndAccountId(id, accountService.getCurrentAccountId());
     }
 
 
-    public void checkOrderStatus(OrderEntity entity) {
+    public void checkOrderStatus(Order entity) {
 
         try {
             gpwConnector.getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(gpwStatusResponse -> {
