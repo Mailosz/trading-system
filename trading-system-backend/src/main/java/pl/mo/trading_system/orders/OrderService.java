@@ -9,6 +9,11 @@ import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
+import pl.mo.trading_system.orders.dto.OrderRequest;
+import pl.mo.trading_system.orders.model.OrderEntity;
+import pl.mo.trading_system.orders.model.OrderRepository;
+import pl.mo.trading_system.orders.model.OrderStatus;
+import pl.mo.trading_system.orders.model.OrderType;
 import pl.mo.trading_system.tickers.TickerRepository;
 
 import java.util.List;

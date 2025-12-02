@@ -1,7 +1,7 @@
-package pl.mo.trading_system.orders;
+package pl.mo.trading_system.orders.dto;
 
 import lombok.Builder;
-import pl.mo.trading_system.tickers.Ticker;
+import pl.mo.trading_system.orders.model.OrderType;
 
 @Builder
 public record OrderRequest(

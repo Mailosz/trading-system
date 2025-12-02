@@ -1,7 +1,7 @@
 package pl.mo.trading_system.gpw;
 
 import lombok.Builder;
-import pl.mo.trading_system.orders.OrderType;
+import pl.mo.trading_system.orders.model.OrderType;
 
 @Builder
 public record GpwOrderRequest(

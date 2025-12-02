@@ -1,4 +1,4 @@
-package pl.mo.trading_system.orders;
+package pl.mo.trading_system.orders.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

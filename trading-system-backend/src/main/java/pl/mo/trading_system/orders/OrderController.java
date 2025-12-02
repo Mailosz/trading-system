@@ -1,10 +1,11 @@
 package pl.mo.trading_system.orders;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.web.bind.annotation.*;
 import pl.mo.trading_system.orders.dto.OrderDetailsDTO;
 import pl.mo.trading_system.orders.dto.OrderListItemDTO;
+import pl.mo.trading_system.orders.dto.OrderRequest;
+import pl.mo.trading_system.orders.model.OrderEntity;
 
 import java.util.List;
 import java.util.Optional;
