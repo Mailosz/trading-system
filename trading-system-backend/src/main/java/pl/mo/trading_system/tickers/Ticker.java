@@ -1,16 +1,22 @@
 package pl.mo.trading_system.tickers;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.*;
 
+@Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Ticker {
+
+    @Id
+    String isin;
 
     String name;
     String ticker;
-    String isin;
     String tradeCurrency;
     String mic;
-    Double price;
 }

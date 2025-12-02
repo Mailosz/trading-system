@@ -3,6 +3,8 @@ package pl.mo.trading_system.orders;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
 import org.springframework.web.bind.annotation.*;
+import pl.mo.trading_system.orders.dto.OrderDetailsDTO;
+import pl.mo.trading_system.orders.dto.OrderListItemDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,13 +17,13 @@ public class OrderController {
     final OrderService orderService;
 
     @GetMapping("/api/orders")
-    public List<OrderEntity> getOrdersList() {
-        return orderService.getUserOrders();
+    public List<OrderListItemDTO> getOrdersList() {
+        return orderService.getUserOrders().stream().map(OrderListItemDTO::fromEntity).toList();
     }
 
     @GetMapping("/api/orders/{id}")
-    public Optional<OrderEntity> getOrderDetails(@PathVariable("id")UUID id) {
-        return orderService.findById(id);
+    public Optional<OrderDetailsDTO> getOrderDetails(@PathVariable("id")UUID id) {
+        return orderService.findById(id).map(OrderDetailsDTO::fromEntity);
     }
 
     @PostMapping("/api/orders/place")

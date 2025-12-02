@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.gpw.GpwConnector;
+import pl.mo.trading_system.gpw.GpwPrice;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,14 +15,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TickerService {
 
-    Map<String, Ticker> tickersMap = new HashMap<>();
+    Map<String, Double> pricesMap = new HashMap<>();
 
     final GpwConnector gpwConnector;
+    final TickerRepository tickerRepository;
 
     @PostConstruct
     public void init() {
 
-        updateInstruments();
+        updateTickers();
         updatePrices();
 
     }
@@ -29,27 +31,26 @@ public class TickerService {
     @Scheduled(fixedRateString = "${gpw.priceUpdateRate}")
     void updateInstrumentPrices() {
         System.out.println("Scheduled prices update");
-        if (!tickersMap.isEmpty()) {
-            updatePrices();
-        }
-
+        updatePrices();
     }
 
 
-    void updateInstruments() {
+    public void updateTickers() {
 
         try {
-            var tickers = gpwConnector.getTickers();
+            var tickers = gpwConnector.getTickers().stream()
+                    .map((gpwTicker -> Ticker.builder()
+                            .isin(gpwTicker.isin())
+                            .ticker(gpwTicker.ticker())
+                            .name(gpwTicker.name())
+                            .tradeCurrency(gpwTicker.tradeCurrency())
+                            .mic(gpwTicker.mic())
+                            .build()
+                    ))
+                    .toList();
 
-            this.tickersMap = tickers.stream().map((ticker) -> {
-                var instrument = new Ticker();
-                instrument.setIsin(ticker.isin());
-                instrument.setMic(ticker.mic());
-                instrument.setTradeCurrency(ticker.tradeCurrency());
-                instrument.setName(ticker.name());
+            tickerRepository.saveAll(tickers);
 
-                return instrument;
-            }).collect(Collectors.toMap(Ticker::getIsin, (i) -> i));
         } catch (ResourceAccessException ex) {
             ex.printStackTrace();
         }
@@ -58,33 +59,24 @@ public class TickerService {
 
     void updatePrices() {
         try {
-            var prices = gpwConnector.getPrices();
-
-            for (var price : prices) {
-
-                var instrument = this.tickersMap.get(price.isin());
-                if (instrument != null) {
-                    instrument.setPrice(price.price());
-                }
-
-            }
+            this.pricesMap = gpwConnector.getPrices().stream()
+                    .collect(Collectors.toMap(GpwPrice::isin, GpwPrice::price));
         } catch (ResourceAccessException ex) {
             ex.printStackTrace();
         }
     }
 
 
-    public List<Ticker> findInstrumentsByName(String name) {
-        String lowerCaseName = name.toLowerCase(Locale.ROOT);
-        return tickersMap.values().stream().filter((i) -> i.getName().toLowerCase(Locale.ROOT).contains(lowerCaseName)).toList();
+    public List<Ticker> findTickersByName(String name) {
+        return tickerRepository.findByNameContainingIgnoreCase(name);
     }
 
-    public List<Ticker> getAllInstruments() {
+    public Optional<TickerDTO> getTickerPrice(String isin) {
 
-        return tickersMap.values().stream().toList();
-    }
-
-    public Optional<Ticker> findTickerByIsin(String isin) {
-        return Optional.ofNullable(tickersMap.get(isin));
+        return tickerRepository.findByIsin(isin).map((ticker) -> {
+            var dto = TickerDTO.fromEntity(ticker);
+            dto.setPrice(pricesMap.get(isin));
+            return dto;
+        });
     }
 }

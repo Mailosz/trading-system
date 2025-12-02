@@ -13,7 +13,7 @@ public class TickersController {
 
     @PostMapping("/api/tickers/search")
     public List<Ticker> searchForTickers(@RequestBody String searchstring) {
-        return tickerService.findInstrumentsByName(searchstring);
+        return tickerService.findTickersByName(searchstring);
     }
 
 }

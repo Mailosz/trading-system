@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.mo.trading_system.AccountService;
 import pl.mo.trading_system.gpw.GpwConnector;
 import pl.mo.trading_system.gpw.GpwOrderRequest;
+import pl.mo.trading_system.tickers.TickerRepository;
 import pl.mo.trading_system.tickers.TickerService;
 
 import java.util.List;
@@ -19,13 +20,13 @@ public class OrderService {
 
     final GpwConnector gpwConnector;
     final OrderRepository orderRepository;
-    final TickerService tickerService;
+    final TickerRepository tickerRepository;
     final AccountService accountService;
 
     public OrderEntity placeOrder(OrderRequest orderRequest) {
         validateOrderRequest(orderRequest);
 
-        var ticker = tickerService.findTickerByIsin(orderRequest.isin());
+        var ticker = tickerRepository.findByIsin(orderRequest.isin());
 
         if (ticker.isEmpty()) {
             throw new RuntimeException("No ticker");
@@ -44,10 +45,7 @@ public class OrderService {
         var order = new OrderEntity();
         order.setAccountId(accountService.getCurrentAccountId());
         order.setIsin(ticker.get().getIsin());
-        order.setTickerName(ticker.get().getName());
-        order.setCurrency(ticker.get().getTradeCurrency());
         order.setQuantity(orderRequest.quantity());
-        order.setCommission(computeCommission(ticker.get().getMic(), orderRequest.priceLimit(), orderRequest.quantity()));
 
         var response = gpwConnector.placeOrder(request);
         if (response.isPresent()) {
@@ -98,11 +96,13 @@ public class OrderService {
 
     public void checkOrderStatus(OrderEntity entity) {
 
-        var response = gpwConnector.getOrderStatus(Long.toString(entity.getOrderId()));
-
-        response.ifPresent(gpwStatusResponse -> {
+        gpwConnector.getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(gpwStatusResponse -> {
             entity.setStatus(OrderStatus.valueOf(gpwStatusResponse.status()));
                     //TODO:
+
+
+
+            entity.setCommission(computeCommission(entity.getTicker().getMic(), entity.getExecutionPrice(), entity.getQuantity()));
         });
 
     }

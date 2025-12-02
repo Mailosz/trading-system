@@ -3,6 +3,7 @@ package pl.mo.trading_system.orders;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import pl.mo.trading_system.tickers.Ticker;
 
 import java.util.UUID;
 
@@ -21,11 +22,12 @@ public class OrderEntity {
 
     OrderStatus status;
 
+    @Column(name = "isin", nullable = false)
     String isin;
 
-    String tickerName;
-
-    String currency;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "isin", insertable = false, updatable = false)
+    Ticker ticker;
 
     Double executionPrice;
 
@@ -35,6 +37,6 @@ public class OrderEntity {
 
     Long filledDate;
 
-    double commission;
+    Double commission;
 
 }
