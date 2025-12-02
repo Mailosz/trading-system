@@ -9,11 +9,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TickersController {
 
-    final InstrumentService instrumentService;
+    final TickerService tickerService;
 
     @PostMapping("/api/tickers/search")
-    public List<Instrument> searchForTickers(@RequestBody String searchstring) {
-        return instrumentService.findInstrumentsByName(searchstring);
+    public List<Ticker> searchForTickers(@RequestBody String searchstring) {
+        return tickerService.findInstrumentsByName(searchstring);
     }
 
 }

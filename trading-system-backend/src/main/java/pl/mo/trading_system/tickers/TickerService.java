@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class InstrumentService {
+public class TickerService {
 
-    Map<String, Instrument> instrumentsMap = new HashMap<>();
+    Map<String, Ticker> tickersMap = new HashMap<>();
 
     final GpwConnector gpwConnector;
 
@@ -29,7 +29,7 @@ public class InstrumentService {
     @Scheduled(fixedRateString = "${gpw.priceUpdateRate}")
     void updateInstrumentPrices() {
         System.out.println("Scheduled prices update");
-        if (!instrumentsMap.isEmpty()) {
+        if (!tickersMap.isEmpty()) {
             updatePrices();
         }
 
@@ -41,15 +41,15 @@ public class InstrumentService {
         try {
             var tickers = gpwConnector.getTickers();
 
-            this.instrumentsMap = tickers.stream().map((ticker) -> {
-                var instrument = new Instrument();
+            this.tickersMap = tickers.stream().map((ticker) -> {
+                var instrument = new Ticker();
                 instrument.setIsin(ticker.isin());
                 instrument.setMic(ticker.mic());
                 instrument.setTradeCurrency(ticker.tradeCurrency());
                 instrument.setName(ticker.name());
 
                 return instrument;
-            }).collect(Collectors.toMap(Instrument::getIsin, (i) -> i));
+            }).collect(Collectors.toMap(Ticker::getIsin, (i) -> i));
         } catch (ResourceAccessException ex) {
             ex.printStackTrace();
         }
@@ -62,7 +62,7 @@ public class InstrumentService {
 
             for (var price : prices) {
 
-                var instrument = this.instrumentsMap.get(price.isin());
+                var instrument = this.tickersMap.get(price.isin());
                 if (instrument != null) {
                     instrument.setPrice(price.price());
                 }
@@ -74,13 +74,17 @@ public class InstrumentService {
     }
 
 
-    public List<Instrument> findInstrumentsByName(String name) {
+    public List<Ticker> findInstrumentsByName(String name) {
         String lowerCaseName = name.toLowerCase(Locale.ROOT);
-        return instrumentsMap.values().stream().filter((i) -> i.getName().toLowerCase(Locale.ROOT).contains(lowerCaseName)).toList();
+        return tickersMap.values().stream().filter((i) -> i.getName().toLowerCase(Locale.ROOT).contains(lowerCaseName)).toList();
     }
 
-    public List<Instrument> getAllInstruments() {
+    public List<Ticker> getAllInstruments() {
 
-        return instrumentsMap.values().stream().toList();
+        return tickersMap.values().stream().toList();
+    }
+
+    public Optional<Ticker> findTickerByIsin(String isin) {
+        return Optional.ofNullable(tickersMap.get(isin));
     }
 }

@@ -3,7 +3,6 @@ package pl.mo.trading_system.orders;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -20,11 +19,20 @@ public class OrderEntity {
 
     OrderStatus status;
 
-    long registrationTime;
-
     String isin;
+
+    String tickerName;
+
+    String currency;
+
+    double priceLimit;
 
     int quantity;
 
-    double priceLimit;
+    long registrationTime;
+
+    Long filledDate;
+
+    double commission;
+
 }
