@@ -77,7 +77,7 @@ export class OrderDetailsElement extends LitElement {
   render() {
     return html`
       
-      <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
+      <a href="/" class="button" style="margin: 4px 0 12px 0;">Powrót do listy zleceń</a>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div id="order-grid">
           <div style="grid-column: span 2; font-size: 1.4em; color: #555;">Szczegóły zlecenia</div>

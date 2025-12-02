@@ -19,6 +19,7 @@ export class TradingSystem extends LitElement {
       text-align: center;
       background-color: var(--trading-system-background-color);
       font-size: 12px;
+      padding: 8px;
     }
 
     main {

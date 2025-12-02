@@ -23,6 +23,9 @@ export class PlaceOrderElement extends LitElement {
   @property({ type: Object })
   selectedTicker: Ticker | null = null;
 
+  @property({ type: Date })
+  expiresAt: Date | null = null;
+
 
   static styles = css`
     :host {
@@ -44,6 +47,8 @@ export class PlaceOrderElement extends LitElement {
       border-radius: 6px;
       color: black;
       box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+      border: none;
+      cursor: pointer;
     }
     .button:hover {
       filter: brightness(1.03);
@@ -51,15 +56,26 @@ export class PlaceOrderElement extends LitElement {
     .button:active {
       filter: brightness(0.9);
     }
+
+    input, select {
+      padding: 6px 4px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    select {
+      padding: 6px 0px;
+      overflow-y: auto;
+    }
   `;
 
 
   render() {
     return html`
-    <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
+    <a href="/" class="button" style="margin: 4px 0 12px 0;">Powrót do listy zleceń</a>
       <div style="display: flex; flex-direction: column; gap: 4px;">
 
-        <input type="text" placeholder="Enter ticker symbol" @input="${this.handleInput}" />
+        <input type="text" placeholder="Wyszukaj instrument..." @input="${this.handleInput}" />
         <select multiple @input="${this.handleTickerSelected}">
           ${this.listBoxData.map(
             (entry, i) => html`
@@ -67,21 +83,21 @@ export class PlaceOrderElement extends LitElement {
             `,
           )}
         </select>
-        <label>Quantity:</label>
-        <input type="number" placeholder="Quantity" .value="${this.quantity}" @input="${this.handleQuantityInput}" />
-        <label>Order Type:</label>
+        <label>Liczba:</label>
+        <input type="number" placeholder="Quantity" .value="${this.quantity}" @input="${this.handleQuantityInput}" required min="1" />
+        <label>Rodzaj zlecenia:</label>
         <select .value="${this.orderType}" @input="${this.handleOrderTypeChange}">
-          <option value="LMT">LMT</option>
-          <option value="PKC">PKC</option>
-          <option value="PCR">PCR</option>
+          <option value="LMT">LMT - zlecenie z limitem</option>
+          <option value="PKC">PKC - po każdej cenie</option>
+          <option value="PCR">PCR - po cenie rynkowej</option>
         </select>
-        <label>Price limit:</label>
-        <input type="number" placeholder="Price limit" .value="${this.priceLimit}" @input="${this.handlePriceLimitInput}" />
-        <label>Valid until:</label>
-        <input type="date" placeholder="Valid until" />
+        <label>Limit ceny:</label>
+        <input type="number" placeholder="Limit ceny" .value="${this.priceLimit}" @input="${this.handlePriceLimitInput}" required min="0" step="0.01" />
+        <label>Zlecenie ważne do (pole opcjonalne):</label>
+        <input type="datetime-local" @input="${this.handleExpiresAtInput}" />
         <label>Current price:</label>
         <input type="text" placeholder="Current price" disabled .value="${this.selectedTicker?.price || '0.00'}" />
-        <button @click="${this.placeOrder}">Place Order</button>
+        <button class="button" @click="${this.placeOrder}" style="margin: 12px 0;">Złóż zlecenie</button>
       </div>
     `;
   }
@@ -124,6 +140,12 @@ export class PlaceOrderElement extends LitElement {
     this.priceLimit = isNaN(value) ? 0.00 : value;
   }
 
+  handleExpiresAtInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value ? new Date(input.value) : null;
+    this.expiresAt = value;
+  }
+
   placeOrder() {
 
     if (!this.selectedTicker) {
@@ -140,7 +162,7 @@ export class PlaceOrderElement extends LitElement {
         orderType: this.orderType,
         priceLimit: this.priceLimit,
         isin: this.selectedTicker?.isin || '',
-        expiresAt: null
+        expiresAt: this.expiresAt ? Math.floor(this.expiresAt.getTime() / 1000) : null,
       }),
     }).then(response => {
       if (response.ok) {

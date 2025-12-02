@@ -15,7 +15,7 @@ export class OrderListElement extends LitElement {
     }
 
     #new-order {
-      margin: 12px auto;
+      margin:  4px 0 12px 0;
     }
 
     .button {
