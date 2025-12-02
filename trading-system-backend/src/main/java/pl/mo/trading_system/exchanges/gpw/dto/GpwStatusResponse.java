@@ -1,4 +1,4 @@
-package pl.mo.trading_system.gpw;
+package pl.mo.trading_system.exchanges.gpw.dto;
 
 public record GpwStatusResponse(
         long orderId,

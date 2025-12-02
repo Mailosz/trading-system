@@ -20,9 +20,9 @@ public class TickersController {
         return tickerService.findTickersByTicker(searchstring);
     }
 
-    @GetMapping("/api/tickers/price/{isin}")
-    public PriceDTO getTickerPrice(@PathVariable("isin") String isin) {
-        return tickerService.getTickerPrice(isin).map((price) -> new PriceDTO(isin, price)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    @GetMapping("/api/tickers/price/{mic}/{isin}")
+    public PriceDTO getTickerPrice(@PathVariable("mic") String mic, @PathVariable("isin") String isin) {
+        return tickerService.getTickerPrice(mic, isin).map((price) -> new PriceDTO(isin, price)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 }

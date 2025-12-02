@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
-import pl.mo.trading_system.gpw.GpwConnector;
-import pl.mo.trading_system.gpw.GpwPrice;
+import pl.mo.trading_system.exchanges.StockExchangeConnector;
+import pl.mo.trading_system.exchanges.StockExchangeService;
+import pl.mo.trading_system.exchanges.gpw.GpwConnector;
+import pl.mo.trading_system.tickers.dto.PriceDTO;
 import pl.mo.trading_system.tickers.model.TickerEntity;
 
 import java.util.*;
@@ -18,63 +20,43 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TickerService {
 
-    Map<String, Double> pricesMap = new HashMap<>();
-
-    final GpwConnector gpwConnector;
+    final StockExchangeService stockExchangeService;
     final TickerRepository tickerRepository;
 
-    @PostConstruct
-    public void init() {
-
-        updateTickers();
-        updatePrices();
-
-    }
-
-    @Scheduled(fixedRateString = "${gpw.priceUpdateRate}")
-    void updateInstrumentPrices() {
-        log.info("Scheduled prices update");
-        updatePrices();
-    }
+//    @PostConstruct
+//    public void init() {
+//
+//
+//        updateTickers();
+//
+//    }
 
 
+
+    @Scheduled(fixedRateString = "${tickers.updateRate}")
     public void updateTickers() {
 
         try {
-            var tickers = gpwConnector.getTickers().stream()
-                    .map((gpwTicker -> TickerEntity.builder()
-                            .isin(gpwTicker.isin())
-                            .ticker(gpwTicker.ticker())
-                            .name(gpwTicker.name())
-                            .tradeCurrency(gpwTicker.tradeCurrency())
-                            .mic(gpwTicker.mic())
-                            .build()
-                    ))
-                    .toList();
 
-            tickerRepository.saveAll(tickers);
+            stockExchangeService.getAllConnectors().forEach((connector) -> {
+                var tickers = connector.getTickers().toList();
+                tickerRepository.saveAll(tickers);
+            });
 
         } catch (ResourceAccessException ex) {
-            ex.printStackTrace();
+            log.error("Error during update tickers", ex);
         }
 
     }
 
-    void updatePrices() {
-        try {
-            this.pricesMap = gpwConnector.getPrices().stream()
-                    .collect(Collectors.toMap(GpwPrice::isin, GpwPrice::price));
-        } catch (ResourceAccessException ex) {
-            ex.printStackTrace();
-        }
-    }
+
 
 
     public List<TickerEntity> findTickersByTicker(String name) {
         return tickerRepository.findByTickerContainingIgnoreCase(name);
     }
 
-    public Optional<Double> getTickerPrice(String isin) {
-        return Optional.of(pricesMap.get(isin));
+    public Optional<Double> getTickerPrice(String mic, String isin) {
+        return stockExchangeService.getConnectorForMic(mic).flatMap(connector -> connector.getPrice(isin));
     }
 }

@@ -1,4 +1,4 @@
-package pl.mo.trading_system.gpw;
+package pl.mo.trading_system.exchanges.gpw.dto;
 
 import lombok.Builder;
 import pl.mo.trading_system.orders.model.OrderType;

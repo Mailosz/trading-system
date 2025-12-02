@@ -136,7 +136,7 @@ export class PlaceOrderElement extends LitElement {
         this.selectedTicker = ticker;
 
         if (ticker) {
-          fetch(`/api/tickers/price/${ticker.isin}`).then(response => response.json()).then(data => {
+          fetch(`/api/tickers/price/${ticker.mic}/${ticker.isin}`).then(response => response.json()).then(data => {
             console.log('Current price data:', data);
             this.currentPrice = Number.parseFloat(data.price);
           }).catch(error => {

@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.client.RestTemplate;
-import pl.mo.trading_system.gpw.GpwConnector;
-import pl.mo.trading_system.gpw.GpwTicker;
+import pl.mo.trading_system.exchanges.gpw.GpwConnector;
+import pl.mo.trading_system.exchanges.gpw.dto.GpwTicker;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

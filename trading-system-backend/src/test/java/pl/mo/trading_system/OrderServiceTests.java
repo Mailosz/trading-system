@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import pl.mo.trading_system.gpw.GpwConnector;
+import pl.mo.trading_system.exchanges.gpw.GpwConnector;
 import pl.mo.trading_system.orders.*;
 import pl.mo.trading_system.orders.dto.OrderRequest;
 import pl.mo.trading_system.orders.model.OrderStatus;

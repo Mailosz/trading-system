@@ -7,8 +7,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import pl.mo.trading_system.AccountService;
-import pl.mo.trading_system.gpw.GpwConnector;
-import pl.mo.trading_system.gpw.GpwOrderRequest;
+import pl.mo.trading_system.exchanges.StockExchangeService;
+import pl.mo.trading_system.exchanges.gpw.GpwConnector;
+import pl.mo.trading_system.exchanges.gpw.dto.GpwOrderRequest;
 import pl.mo.trading_system.orders.dto.OrderRequest;
 import pl.mo.trading_system.orders.model.OrderEntity;
 import pl.mo.trading_system.orders.model.OrderRepository;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
 
-    final GpwConnector gpwConnector;
+    final StockExchangeService stockExchangeService;
     final OrderRepository orderRepository;
     final TickerRepository tickerRepository;
     final AccountService accountService;
@@ -57,10 +58,8 @@ public class OrderService {
         order.setIsin(ticker.get().getIsin());
         order.setQuantity(orderRequest.quantity());
 
-        var response = gpwConnector.placeOrder(request);
+        var response = stockExchangeService.getConnectorForMic(ticker.get().getMic()).flatMap(connector -> connector.placeOrder(request));
         if (response.isPresent()) {
-
-
 
             order.setOrderId(response.get().orderId());
             order.setStatus(OrderStatus.valueOf(response.get().status().toUpperCase(Locale.ROOT)));
@@ -69,7 +68,7 @@ public class OrderService {
 
             return order;
         } else {
-            throw new RuntimeException("TODO");
+            throw new RuntimeException("No response from stok exchange");
         }
     }
 
@@ -87,16 +86,6 @@ public class OrderService {
         }
     }
 
-    private double computeCommission(String mic, Double price, int quantity) {
-
-        if ("XWAR".equals(mic)) {
-            return Math.max(5, (price * quantity) * 0.03);
-        } else {
-            return Math.max(10, (price * quantity) * 0.02);
-        }
-
-    }
-
     public List<OrderEntity> getUserOrders() {
         return orderRepository.findAllByAccountId(accountService.getCurrentAccountId());
     }
@@ -109,23 +98,25 @@ public class OrderService {
     public void checkOrderStatus(OrderEntity entity) {
 
         try {
-            gpwConnector.getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(gpwStatusResponse -> {
-                var status = OrderStatus.valueOf(gpwStatusResponse.status().toUpperCase(Locale.ROOT));
-                if (entity.getStatus() != status) {
+            var mic = entity.getTicker().getMic();
+            var connector = stockExchangeService.getConnectorForMic(mic);
+            connector.orElseThrow(()->new RuntimeException("No connector for mic " + mic)).getOrderStatus(Long.toString(entity.getOrderId())).ifPresent(statusResponse -> {
+                if (entity.getStatus() != statusResponse.status()) {
 
-                    if (status == OrderStatus.FILLED) {
-                        entity.setExecutionPrice(gpwStatusResponse.executionPrice());
-                        entity.setFilledDate(gpwStatusResponse.executedTime());
-                        entity.setCommission(computeCommission(entity.getTicker().getMic(), entity.getExecutionPrice(), entity.getQuantity()));
+                    if (statusResponse.status() == OrderStatus.FILLED) {
+                        entity.setExecutionPrice(statusResponse.executionPrice());
+                        entity.setFilledDate(statusResponse.executedTime());
+                        entity.setQuantity(statusResponse.quantity());
+                        entity.setCommission(statusResponse.commission());
 
                         filledOrdersService.handleOrderFilled(entity);
                     }
 
-                    entity.setStatus(status);
+                    entity.setStatus(statusResponse.status());
                     orderRepository.save(entity);
                 }
             });
-        } catch (ResourceAccessException ex) {
+        } catch (RuntimeException ex) {
             log.error("Error during checkOrderStatus", ex);
         }
 
