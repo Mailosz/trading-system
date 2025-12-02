@@ -83,7 +83,7 @@ export class PlaceOrderElement extends LitElement {
         <select multiple @input="${this.handleTickerSelected}" required>
           ${this.listBoxData.map(
             (entry, i) => html`
-              <option .value="${entry.isin}">${entry.name}</option>
+              <option .value="${entry.isin}">${entry.name} (${entry.isin})</option>
             `,
           )}
         </select>
