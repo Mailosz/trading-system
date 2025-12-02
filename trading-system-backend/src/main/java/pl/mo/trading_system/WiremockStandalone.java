@@ -75,7 +75,7 @@ public class WiremockStandalone {
                             """)));
 
 
-            wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/gpw/order/.*"))
+            wireMockServer.stubFor(WireMock.get(WireMock.urlPathMatching("/gpw/order/.*"))
                     .willReturn(WireMock.aResponse().withHeader("content-type", "application/json").withBody("""
                             {
                                 "orderId": 1111111,
