@@ -13,7 +13,7 @@ export class OrderDetailsElement extends LitElement {
 
   static styles = css`
     :host {
-      font-size: 12px;
+
     }
 
     .button {
@@ -48,12 +48,12 @@ export class OrderDetailsElement extends LitElement {
 
     .label {
       text-align: right;
-      align-self: center;
+      align-self: end;
     }
 
     .value {
       text-align: left;
-      font-size: 14px;
+      font-size: 1.2em;
     }
   `;
 
@@ -80,7 +80,7 @@ export class OrderDetailsElement extends LitElement {
       <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div id="order-grid">
-          <div style="grid-column: span 2; font-size: 20px; color: #555;">Szczegóły zlecenia</div>
+          <div style="grid-column: span 2; font-size: 1.4em; color: #555;">Szczegóły zlecenia</div>
 
           ${this.orderData === undefined ? html`<div>Ładowanie danych zlecenia...</div>`: 
             this.orderData === null ? html`<div>Brak zlecenia</div>`  :

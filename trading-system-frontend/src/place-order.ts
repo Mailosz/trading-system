@@ -26,7 +26,6 @@ export class PlaceOrderElement extends LitElement {
 
   static styles = css`
     :host {
-      display: block;
 
     }
 
@@ -35,13 +34,30 @@ export class PlaceOrderElement extends LitElement {
       text-align: left;
       margin-top: 8px;
     }
+
+    .button {
+      display: inline-block;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 8px 16px;
+      background-color: #ddd;
+      border-radius: 6px;
+      color: black;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    .button:hover {
+      filter: brightness(1.03);
+    }
+    .button:active {
+      filter: brightness(0.9);
+    }
   `;
 
 
   render() {
     return html`
+    <a href="/" class="button" style="margin: 12px 0;">Powrót do listy zleceń</a>
       <div style="display: flex; flex-direction: column; gap: 4px;">
-        <div><a href="/">Powrót do listy zleceń</a></div>
 
         <input type="text" placeholder="Enter ticker symbol" @input="${this.handleInput}" />
         <select multiple @input="${this.handleTickerSelected}">
