@@ -92,8 +92,7 @@ public class OrderService {
     }
 
     public Optional<OrderEntity> findById(UUID id) {
-        return orderRepository.findById(id)
-                .filter((order) -> accountService.getCurrentAccountId() == order.getOrderId());
+        return orderRepository.findByIdAndAccountId(id, accountService.getCurrentAccountId());
     }
 
 
